@@ -1,0 +1,107 @@
+% Deuxième partie — État de l’art des méthodes
+
+\section{État de l’art des méthodes}
+
+\subsection{Famille YOLO (You Only Look Once)}
+\paragraph{Principe} YOLO reformule la détection d’objets en une régression unique effectuée en une seule passe. L’image est divisée en grille, chaque cellule prédit directement boîtes englobantes et classes, assurant une inférence ultra-rapide adaptée au temps réel.
+
+\paragraph{Évolution} \begin{itemize}[left=0pt]
+  \item YOLOv1–v3: unification une étape, ancres, multi-échelles, backbone Darknet-53.
+  \item YOLOv4: CSPNet, Mosaic/CutMix, entraînement SAT; 43.5\% mAP COCO.
+  \item YOLOv5: implémentation PyTorch, auto-hyperparamètres, export ONNX/TensorRT.
+  \item YOLOv8: tête \emph{anchor-free}, tâches unifiées, Distribution Focal Loss.
+  \item YOLOv10: entraînement sans NMS via assignations doubles cohérentes; latence réduite.
+  \item YOLOv11: blocs C3k2, SPPF; meilleures performances à paramètres égaux, tâches étendues.
+\end{itemize}
+
+\paragraph{Performances} En 2025, YOLOv11 couvre 39–55\% mAP avec 1.5–11 ms par image sur GPU T4 (≈88–200+ FPS), offrant un excellent compromis précision/vitesse sur vidéo temps réel.
+
+\paragraph{Avantages} \begin{itemize}[left=0pt]
+  \item Vitesse exceptionnelle et latence faible.
+  \item Précision compétitive face à des méthodes plus complexes.
+  \item Moins de faux positifs grâce au contexte global.
+  \item Polyvalence: détection, segmentation, classification, pose.
+  \item Déploiement facilité (CPU/GPU/edge; export vers ONNX/TensorRT/CoreML).
+\end{itemize}
+
+\paragraph{Limites} \begin{itemize}[left=0pt]
+  \item Petits objets/occlusions restent difficiles, surtout en variantes légères.
+  \item Ressources GPU nécessaires pour les versions précises (l/x).
+  \item Sensible aux conditions extrêmes (éclairage, flou).
+  \item Inévitable \emph{trade-off} précision/vitesse selon la taille du modèle.
+\end{itemize}
+
+\paragraph{Applications typiques} \begin{itemize}[left=0pt]
+  \item Surveillance temps réel, conduite autonome, retail analytics, inspection industrielle.
+\end{itemize}
+
+\paragraph{Type d’apprentissage} Supervision classique avec boîtes et labels; pertes localisation/classe/confiance. Entraînement moderne: augmentation (Mosaic/MixUp), multi-échelle, assignation dynamique.
+
+\subsection{Architectures Transformer pour vidéo}
+\paragraph{Contexte ViT→vidéo} ViT traite des patches comme tokens; en vidéo, il faut modéliser simultanément dimensions spatiales et temporelles pour suivre objets et actions sur plusieurs frames.
+
+\paragraph{TGBFormer} Fusion Transformer + GraphFormer: dépendances globales et relations locales spatio-temporelles; \textbf{86.5\% mAP à 41 FPS} (ImageNet VID), viable pour haute précision avec contraintes temps réel modérées.
+
+\paragraph{VideoGLaMM} Alignement multimodal pixel-niveau: relie descriptions textuelles et localisations précises dans la vidéo via encodeurs visuels duaux et décodeur spatio-temporel; ouvre recherche/annotation par langue naturelle.
+
+\paragraph{ViViT et variantes} \begin{itemize}[left=0pt]
+  \item Attention jointe spatio-temporelle (performante mais coûteuse).
+  \item Encodeur factorisé (spatial puis temporel), plus efficace.
+  \item Réduction temporelle/pooling central; AMViT (mémoire adaptative) pour longues vidéos.
+\end{itemize}
+
+\paragraph{Avantages} \begin{itemize}[left=0pt]
+  \item Modélisation temporelle supérieure et compréhension contextuelle riche.
+  \item Robustesse au mouvement rapide via agrégation multi-frame.
+  \item Flexibilité multimodale (texte/audio).
+\end{itemize}
+
+\paragraph{Limites} \begin{itemize}[left=0pt]
+  \item Complexité quadratique, mémoire KV coûteuse.
+  \item Besoins élevés en données, latence d’inférence.
+\end{itemize}
+
+\paragraph{Type d’apprentissage} Principalement supervisé (pré-entraînement images/vidéos, fine-tuning). Forte émergence d’auto-supervision (prédiction futures, contrastif, réordonnancement).
+
+\subsection{DETR et variants}
+\paragraph{DETR original} \emph{Set prediction} end-to-end: backbone CNN + encodage positionnel → Transformer; \emph{object queries} interrogent les features, têtes prédisent classe/boîte; appariement bipartite (Hungarian) élimine le NMS. Convergence initiale lente.
+
+\paragraph{MI-DETR} Remplace la cascade par interrogations parallèles (\emph{multi-time inquiries}) via têtes SA/CA/FFN indépendantes dont les sorties sont concaténées et projetées. Améliore extraction d’information et robustesse aux occlusions/variations.
+
+\subsection{Agrégation temporelle inter-frames}
+\paragraph{YOLO + agrégation de features} Sélection/agrégation multi-échelle de features sur plusieurs frames: \textbf{92.9\% AP50} à \textbf{30+ FPS}. Idéal quand la précision prime avec latence légère.
+
+\paragraph{Exploitation inter-frames} \begin{itemize}[left=0pt]
+  \item Réduction du bruit et des faux positifs isolés.
+  \item Complétion d’occlusions temporaires et stabilité des identités.
+  \item Bounding boxes et classes plus précises; suivi implicite.
+\end{itemize}
+
+\paragraph{Avantages} Performance sur mouvements rapides; robustesse aux conditions variables; tracking simplifié.
+
+\paragraph{Limites} Coût mémoire (cache features), sensibilité aux changements brusques d’apparence, légère latence (2–5 frames).
+
+\subsection{Approches émergentes}
+\paragraph{SNNs (MSD)} Détection bio-inspirée économe en énergie: \textbf{62.0\% mAP} avec 7.8M paramètres et 6.43 mJ; Spiking-YOLO approche 98\% de Tiny YOLO avec consommation \textasciitilde280× inférieure.
+
+\paragraph{Faible supervision} DOtA (détection 3D multi-agents sans annotations), PointSR (supervision point-level), DViN (vision-langage référentiel) réduisent massivement le coût d’annotation.
+
+\paragraph{Potentiel futur} Déploiement embarqué/edge (Loihi/TrueNorth), réduction des coûts d’annotation (\textasciitilde50–90\%), meilleure scalabilité vers nouveaux domaines.
+
+\subsection{Tableau comparatif synthétique}
+\begin{table}[h]
+  \centering
+  \small
+  \begin{tabular}{p{3cm} p{2.5cm} p{4cm} p{4cm} p{3.2cm}}
+    \toprule
+    \textbf{Méthode} & \textbf{mAP/FPS} & \textbf{Points forts} & \textbf{Limites} & \textbf{Cas d’usage} \\
+    \midrule
+    YOLO (v11) & 39–55\% / 88–200+ & Vitesse, simplicité, déploiement edge & Petits objets, GPU requis pour haute précision & Surveillance, embarqué, retail \\
+    Transformers vidéo & 80–87\% / 30–40 & Contexte global, temporalité, multimodal & Complexité, mémoire, latence & Analyse avancée, annotation, recherche vidéo \\
+    DETR / MI-DETR & 43–55\% / 20–40 & End-to-end, pas de NMS, robustesse & Convergence/latence, coût inférence & Scènes complexes, occlusions \\
+    YOLO + agrégation & AP50 92.9 / 30+ & Précision stabilisée multi-frame & Mémoire, latence légère & Haute précision vidéo temps réel \\
+    SNNs (MSD) & 62\% / très efficace & Énergie ultra-faible, puces neuromorphiques & Perf. inférieure, outillage limité & Embarqué batterie/IoT \\
+    Faible supervision & — / — & Moins d’annotations (50–90\% gain) & Perf. dépend des signaux faibles & Nouvelles classes/domaines, prototypage \\
+    \bottomrule
+  \end{tabular}
+\end{table}

@@ -1,0 +1,46 @@
+% Partie 8 — Recommandations et faisabilité
+\section{Recommandations et faisabilité}
+
+\subsection{Matrice décisionnelle par cas d’usage}
+\begin{table}[ht]
+  \centering
+  \small
+  \begin{tabular}{p{3.5cm} p{4.2cm} p{4.1cm} p{4.4cm} p{4.2cm}}
+    \toprule
+    Cas d’usage & Architecture recommandée & Datasets & Métriques prioritaires & Conformité RGPD \\
+    \midrule
+    Surveillance temps réel & YOLOv11 (mode nano à média) & ImageNet VID, OD-VIRAT & Rappel élevé, mAP@0.50, FPS $\geq$ 25 & Intérêt légitime, DPIA obligatoire \\
+    Analyse retail & TGBFormer & YouTube-VOS, COCO & Précision, mAP@0.50:0.95, F1-Score & Intérêt légitime, panneaux informatifs \\
+    Conduite autonome & YOLO + agrégation de features & KITTI, BDD & mAP@0.50:0.95, FPS $\geq$ 30, Latence $<$ 50 ms & Obligation légale ou mission publique \\
+    \bottomrule
+  \end{tabular}
+  \caption{Matrice décisionnelle par cas d’usage}
+\end{table}
+
+\subsection{Roadmap d’implémentation}
+\begin{enumerate}[leftmargin=*]
+  \item \textbf{Phase 1 (0–3 mois).} POC avec YOLOv11 sur ImageNet VID et OD-VIRAT en mode \emph{skip-frame}; évaluation des performances baseline (mAP, rappel, FPS); réalisation de la première DPIA pour cadrer les obligations RGPD.
+  \item \textbf{Phase 2 (3–6 mois).} Collecte et annotation interne de 500–1\,000 vidéos spécifiques (\emph{skip-frame} 1 FPS); \emph{fine-tuning} du modèle sur données internes; intégration progressive de mesures Privacy by Design (anonymisation, chiffrement).
+  \item \textbf{Phase 3 (6–12 mois).} Déploiement en production sur environnement restreint (edge ou cloud); monitoring continu (tableaux de bord mAP/FPS) et audit RGPD; ajustement des seuils et optimisation des pipelines d’inférence.
+  \item \textbf{Phase 4 (12+ mois).} Optimisation des modèles (pruning, quantification) pour \emph{edge deployment}; exploration de l’apprentissage faiblement supervisé (PointSR) et auto-supervisé (DOtA); scalabilité vers de nouveaux sites et cas d’usage.
+\end{enumerate}
+
+\subsection{Estimation des ressources}
+\paragraph{Humaines} 1–2 Data Engineers (collecte, annotation, pipelines données); 1 Machine Learning Engineer (fine-tuning, optimisation, déploiement); 1 expert conformité RGPD (DPIA, audits, procédures).
+
+\paragraph{Techniques} GPU NVIDIA A100/V100 (ou cluster cloud équivalent) pour entraînement et inférence; stockage 5–10 TB pour datasets vidéo et temporaires; infrastructure cloud ou on-premise Kubernetes pour scalabilité.
+
+\paragraph{Financières} Licences éventuelles pour datasets commerciaux (surveillance privée); coût annotation externe: $10–$25/h annotateur; dépenses d’infrastructure cloud: ~$5\,000–$10\,000/mois; formation et ateliers RGPD: $20\,000–$30\,000 initiaux.
+
+\paragraph{Temporelles} 6–12 mois pour déploiement complet et stabilisation; itérations trimestrielles pour revue performance et conformité.
+
+\subsection{Risques et mitigation}
+\begin{description}[leftmargin=!,labelwidth=3.6cm]
+  \item[\textbf{Risque technique}] Performances insuffisantes sur cas réels (petits objets, flou). \emph{Mitigation} : validation POC sur données internes, ajustement d’architecture (agrégation).
+  \item[\textbf{Risque conformité}] Violations RGPD (surveillance illégale). \emph{Mitigation} : DPIA rigoureuse, consultation DPO, mise en place Privacy by Design.
+  \item[\textbf{Risque budget}] Dépassement des coûts d’annotation et d’infrastructure. \emph{Mitigation} : phases incrémentales avec KPI clairs, basculement partiel vers supervision faible.
+  \item[\textbf{Risque adoption}] Résistance des utilisateurs internes (sécurité, IT). \emph{Mitigation} : ateliers de sensibilisation, documentation des bénéfices, support technique dédié.
+\end{description}
+
+\subsection{Conclusion sur la faisabilité}
+Les technologies de détection d’objets vidéo sont désormais matures et accessibles, adaptées à divers cas d’usage. La combinaison d’architectures éprouvées (YOLOv11, TGBFormer) et de jeux de données standard facilite une intégration rapide. La conformité RGPD est réalisable via une DPIA initiale, des mesures de Privacy by Design et un suivi continu. Un déploiement phasé permet de maîtriser coûts et risques, avec un ROI positif dès la phase POC. \textbf{Recommandation} : lancer un projet pilote supervisé, puis migrer progressivement vers des approches hybrides pour étendre le système à grande échelle.

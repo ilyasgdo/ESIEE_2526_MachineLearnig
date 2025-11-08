@@ -1,0 +1,58 @@
+\section{Vie priv\'ee et s\'ecurit\'e}\label{sec:privacy-security}
+
+Cette partie pr\'esente le cadre RGPD et les mesures techniques pour un d\'eploiement \`a la fois efficace et conforme de la d\'etection d'objets en vid\'eo.
+
+\subsection{Cadre r\'eglementaire RGPD}
+\textbf{Surveillance vid\'eo = donn\'ees personnelles.} Les flux vid\'eo capturent des \'el\'ements identifiants (visages, silhouettes). Tout traitement (collecte, conservation, analyse ML) est soumis au RGPD.
+
+\textbf{Bases l\'egales (Art.~6(1)).} Consentement (rarement applicable), Contrat (cas limit\'es), Obligation l\'egale (sp\'ecifique), Int\'er\^ets vitaux (urgence), Mission d'int\'er\^et public (autorites), Int\'er\^et l\'egitime (le plus courant, sous conditions de n\'ecessit\'e et proportionnalit\'e). 
+
+\begin{table}[h]
+  \centering
+  \small
+  \begin{tabular}{l l l}
+    \toprule
+    Base l\'egale & Applicabilit\'e & Remarques \\
+    \midrule
+    Consentement & Rare & Difficult\'e de refus libre \\
+    Contrat & Limite & N\'ecessit\'e stricte \\
+    Obligation l\'egale & Sp\'ecifique & Secteurs r\'eglement\'es \\
+    Int\'er\^ets vitaux & Urgence & Temporaire \\
+    Int\'er\^et public & Autorit\'es & Service public \\
+    Int\'er\^et l\'egitime & Fr\'equent & N\'ecessit\'e + proportionnalit\'e + information \\
+    \bottomrule
+  \end{tabular}
+  \caption{Synth\`ese des bases l\'egales applicables \`a la vid\'eosurveillance.}
+\end{table}
+
+\textbf{Droits des personnes.} Information (signal\'etique), acc\`es, rectification, effacement, opposition, limitation.
+
+\subsection{\'Evaluation d'impact (DPIA)}
+Obligatoire si risque \'elev\'e (Art.~35), typiquement pour une surveillance syst\'ematique \`a grande \'echelle en zone publique. Contenu: description du traitement, n\'ecessit\'e/proportionnalit\'e, analyse des risques (probabilit\'e \& gravite), mesures d'att\'enuation (techniques \& organisationnelles). Consultation de la CNIL si risque r\'esiduel \'elev\'e (Art.~36).
+
+\subsection{Mesures techniques de protection}
+\textbf{Privacy by Design.} Int\'egrer la protection d\`es la conception: edge/federated learning, anonymisation par d\'efaut, champs de vue limit\'es, s\'eparation pr\'ecoce des identit\'es.
+
+\textbf{Anonymisation \& pseudonymisation.} Privil\'egier l'anonymisation irr\'eversible (floutage/pixellisation/masquage non r\'eversible). Entra\^iner sur vid\'eos anonymis\'ees; des travaux (p.~ex. E2PRIV) montrent des performances de d\'etection quasi identiques tout en r\'eduisant fortement les risques d'identification.
+
+\textbf{Chiffrement.} En transit: TLS~1.2+, HTTPS/VPN. Au repos: AES-256, gestion des cl\'es s\'ecuris\'ee (rotation, isolement).
+
+\textbf{Contr\^ole d'acc\`es.} Moindre privil\`ege, MFA, journaux d'audit complets et inviolables.
+
+\textbf{Dur\'ees de conservation.} 72~h usuelles pour s\'ecurit\'e g\'en\'erale; jusqu'\`a 30~jours si justifi\'e. Suppression automatique \`a l'\'ech\'eance.
+
+\subsection{Technologies alternatives}
+\textbf{LiDAR.} Donn\'ees 3D sans texture ni couleur, d\'etection d'objets efficace avec exposition minimale des identit\'es. Co\^ut en baisse; utile pour p\'erim\`etres sensibles, comptage, intrusions.
+
+\subsection{Donn\'ees sensibles \& minimisation}
+Cat\'egories Art.~9 (biom\'etrie, sant\'e, opinions, etc.) \`a \'eviter. Si in\'evitable: satisfaire une base l\'egale (Art.~6) \emph{et} une exception (Art.~9(2)). Appliquer la minimisation (angles/cadrage, r\'esolution suffisante, d\'esactivation des fonctions non n\'ecessaires, masquage permanent des zones non pertinentes).
+
+\subsection{Checklist de conformit\'e}
+\begin{enumerate}[leftmargin=*]
+  \item DPIA compl\'et\'ee, risque r\'esiduel acceptable document\'e.
+  \item Base l\'egale identifi\'ee (souvent int\'er\^et l\'egitime) et test de proportionnalit\'e r\'ealis\'e.
+  \item Privacy by Design impl\'ement\'e, chiffrement et contr\^ole d'acc\`es en place.
+  \item Transparence: signal\'etique conforme, notice vie priv\'ee, proc\'edures d'exercice des droits.
+  \item Dur\'ees de conservation configur\'ees (72~h \`a 30~j) avec suppression automatique.
+  \item Gouvernance: DPO consult\'e, formation des \'equipes, contrats sous-traitants conformes, plan de r\'eponse aux incidents.
+\end{enumerate}

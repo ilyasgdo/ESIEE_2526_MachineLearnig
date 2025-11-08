@@ -1,0 +1,94 @@
+% Quatrième partie — Métriques de performance
+
+\section{Métriques de performance}
+
+L'évaluation rigoureuse des détecteurs d'objets vidéo repose sur des métriques complémentaires couvrant la localisation spatiale, la classification, et la vitesse (temps réel). Cette section synthétise les métriques standard, leurs interprétations et leur pertinence selon les cas d'usage.
+
+\subsection{Métriques de précision spatiale}
+\paragraph{IoU (Intersection over Union)} Mesure le chevauchement entre la box prédite et la vérité terrain. \emph{Définition} :
+\[
+\mathrm{IoU} = \frac{\mathrm{area}(B_{\text{pred}} \cap B_{\text{gt}})}{\mathrm{area}(B_{\text{pred}} \cup B_{\text{gt}})}
+\]
+Pour la classification binaire (présence/absence sur pixel ou instance), on rencontre l'approximation suivante :
+\[\mathrm{IoU} = \frac{TP}{TP + FP + FN}\]
+\emph{Interprétation} : \begin{itemize}[left=0pt]
+  \item IoU = 0 : aucun chevauchement
+  \item 0 < IoU < 0.5 : localisation imprécise
+  \item IoU ≥ 0.5 : détection généralement considérée valide
+  \item IoU ≥ 0.75 : haute précision de localisation
+  \item IoU = 1 : correspondance parfaite
+\end{itemize}
+\emph{Pertinence} : métrique fondamentale de localisation, pénalise sous- et sur-détection. \emph{Limites} : forte sensibilité aux petits objets (< 32×32), n'encode pas l'exactitude de la classe.
+
+\paragraph{Précision et Rappel} \emph{Définitions} :
+\[\mathrm{Precision} = \frac{TP}{TP + FP} \quad;\quad \mathrm{Recall} = \frac{TP}{TP + FN}\]
+\emph{Trade-off} selon le seuil de confiance : \begin{itemize}[left=0pt]
+  \item Seuil élevé : précision ↑, rappel ↓ (modèle conservateur)
+  \item Seuil bas : précision ↓, rappel ↑ (modèle permissif)
+\end{itemize}
+\emph{Choix contextuel} : \begin{itemize}[left=0pt]
+  \item Surveillance : privilégier rappel élevé (éviter FN)
+  \item Retail analytics : équilibre précision/rappel (F1)
+  \item Conduite autonome : précision \textbf{et} rappel très élevés (> 0.98)
+\end{itemize}
+
+\subsection{Métriques agrégées}
+\paragraph{F1-Score} Moyenne harmonique précision–rappel :
+\[\mathrm{F1} = \frac{2\,\mathrm{Precision}\cdot\mathrm{Recall}}{\mathrm{Precision}+\mathrm{Recall}} = \frac{2TP}{2TP + FP + FN}\]
+Pénalise les modèles déséquilibrés, utile sur datasets avec classes majoritaires/minoritaires.
+
+\paragraph{Average Precision (AP) et Mean Average Precision (mAP)} \emph{AP} résume la courbe précision–rappel (aire sous courbe). \emph{mAP} : moyenne des AP sur toutes les classes.
+\begin{itemize}[left=0pt]
+  \item \emph{mAP@0.50} (VOC) : seuil IoU unique à 0.50, indulgent sur la localisation.
+  \item \emph{mAP@0.50:0.95} (COCO) : moyenne sur IoU ∈ \{0.50,...,0.95\}, plus exigeant (souvent ~15–20 pts \emph{en dessous} de mAP@0.50 pour un même modèle).
+\end{itemize}
+\emph{Pertinence} : standard de comparaison inter-modèles (COCO, ImageNet VID). \emph{Limites} : masque les faiblesses sur classes rares, biais si objets « faciles » dominent, peu sensible à la consistance temporelle.
+
+\subsection{Métriques de vitesse}
+\paragraph{FPS (Frames Per Second)} Nombre d'images traitées par seconde — critère clé pour le temps réel.
+\begin{itemize}[left=0pt]
+  \item < 15 FPS : trop lent (offline ou non critique)
+  \item 15–25 FPS : acceptable si tolérance aux retards
+  \item 25–30 FPS : minimum pour fluidité perceptuelle
+  \item 30–60 FPS : idéal pour temps réel (surveillance, robotique)
+  \item > 60 FPS : excellent, marge pour tracking/post-traitements
+\end{itemize}
+Exemple : TGBFormer atteint 86.5\% mAP à 41 FPS (bon équilibre précision/vitesse).
+
+\paragraph{Latence} Délai capture→détection (prétraitement + inférence + post-traitement).
+\[\mathrm{Latence} = t_{\text{détection disponible}} - t_{\text{capture}}\]
+\emph{Relation} : \textit{FPS} mesure le débit, \textit{latence} la réactivité (pipeline : FPS élevé possible avec latence élevée).
+\emph{Contraintes typiques} : \begin{itemize}[left=0pt]
+  \item Conduite autonome : < 50 ms \quad Drone : < 30 ms
+  \item Surveillance : < 200 ms \quad Analytics offline : non critique
+\end{itemize}
+\emph{Variabilité matériel} : GPU A100/V100 ≫ RTX 3060 ≫ CPU ≫ Edge (Jetson/mobile). Optimisations courantes : quantification (FP32→INT8), pruning, distillation, TensorRT/ONNX (gain 2–5×; perte mAP ~1–3 pts).
+
+\subsection{Choix des métriques selon cas d'usage}
+Le choix doit refléter coûts relatifs des erreurs et contraintes opérationnelles.
+\begin{itemize}[left=0pt]
+  \item \textbf{Surveillance sécurité} : rappel élevé, mAP@0.50, FPS ≥ 25.
+  \item \textbf{Conduite autonome} : mAP@0.50:0.95, FPS ≥ 30, latence < 50 ms.
+  \item \textbf{Retail analytics} : précision, rappel, F1 élevé (≤ temps réel strict).
+  \item \textbf{Inspection industrielle} : précision élevée, IoU/mAP@0.75 (localisation fine).
+  \item \textbf{Analyse sportive} : mAP@0.50, FPS ≥ 30, F1 (fluidité prioritaire).
+  \item \textbf{Santé/Médical} : précision très élevée, IoU, mAP@0.75 (offline acceptable).
+\end{itemize}
+
+\subsection{Tableau récapitulatif : Métriques par cas d'usage}
+\begin{table}[h]
+  \centering
+  \small
+  \begin{tabular}{p{3.2cm} p{4.0cm} p{3.2cm} p{5.6cm}}
+    \toprule
+    \textbf{Cas d'usage} & \textbf{Métriques prioritaires} & \textbf{Seuils typiques} & \textbf{Justification} \\
+    \midrule
+    Surveillance & Rappel, mAP@0.50, FPS & Rappel > 0.95, FPS ≥ 25 & Éviter FN critiques, localisation modérée suffisante, temps réel requis. \\
+    Conduite autonome & mAP@0.50:0.95, Latence & Latence < 50 ms, FPS ≥ 30 & Précision \& réactivité maximales, erreurs très coûteuses. \\
+    Retail analytics & Précision, Rappel, F1 & F1 > 0.85 & Statistiques fiables, temps réel strict non critique (15–20 FPS). \\
+    Inspection industrielle & IoU, mAP@0.75, Précision & IoU/mAP élevés & Localisation fine pour action robotique, coûts FP/FN élevés. \\
+    Analyse sportive & mAP@0.50, FPS, F1 & FPS ≥ 30 & Fluidité visuelle, corrections possibles en post-prod. \\
+    Santé/Médical & Précision, IoU, mAP@0.75 & Précision → max & Diagnostic fiable, minimiser FP/FN, offline acceptable. \\
+    \bottomrule
+  \end{tabular}
+\end{table}

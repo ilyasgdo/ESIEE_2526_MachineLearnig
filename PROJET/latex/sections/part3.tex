@@ -1,0 +1,97 @@
+% Troisième partie — Datasets disponibles
+
+\section{Datasets disponibles}
+
+\subsection{ImageNet VID}
+\paragraph{Description} Benchmark standard pour la détection d'objets en vidéo, dérivé d'ImageNet et étendu aux séquences avec annotations temporelles cohérentes.
+
+\paragraph{Caractéristiques} \begin{itemize}[left=0pt]
+  \item \textasciitilde4000 séquences vidéo en train/val, 30 catégories d'objets (animaux, véhicules, objets du quotidien).
+  \item Annotations en bounding boxes et labels de classe sur frames sélectionnées.
+  \item Scènes naturelles: mouvements de caméra, changements d'échelle, occlusions, variations d'éclairage.
+\end{itemize}
+
+\paragraph{Forces} Standard largement adopté; annotations de haute qualité; défis vidéo réalistes; évalue la cohérence temporelle (ex.: TGBFormer 86.5\% mAP à 41 FPS; ClipVID 84.7\% mAP à 39.3 FPS).
+
+\paragraph{Biais identifiés} Échelle limitée; surreprésentation de certaines catégories; séquences courtes; résolutions variables.
+
+\paragraph{Utilisation recommandée} Benchmarking et validation par rapport à l'état de l'art avant application sur données spécifiques au domaine.
+
+\subsection{YouTube-VOS}
+\paragraph{Description} Dataset à large échelle pour segmentation vidéo (spatio-temporel), clips YouTube diversifiés.
+
+\paragraph{Caractéristiques} \begin{itemize}[left=0pt]
+  \item 4,453 clips (2018), 78 catégories; version 2021: 3,859 vidéos.
+  \item Annotations pixel-level tous les 5 frames (≈6 FPS), objets multiples par clip (jusqu'à 5).
+  \item 133,886 annotations (2018) ; 232k annotations (2021) sur 8,171 instances uniques.
+\end{itemize}
+
+\paragraph{Forces} Très grande échelle; diversité réaliste; 26 catégories de validation non vues (mesure de généralisation); masques précis.
+
+\paragraph{Limites} Clips courts (3–6 s); annotations \emph{skip-frame}; complexité très variable; biais de popularité YouTube.
+
+\paragraph{Utilisation recommandée} Entraînement générique de détection/segmentation vidéo; pré-entraînement avant fine-tuning; tâches pixel-level (édition, AR).
+
+\subsection{COCO (Common Objects in Context)}
+\paragraph{Description} Dataset d'images statiques massivement utilisé pour pré-entraîner les détecteurs avant adaptation vidéo.
+
+\paragraph{Caractéristiques} \begin{itemize}[left=0pt]
+  \item 330k images (200k annotées), 80 catégories ; \textasciitilde1.5M instances (≈47 objets/image).
+  \item Annotations multi-tâches: bounding boxes, masques instance, keypoints (250k+ personnes), segmentation \emph{stuff}, 5 captions par image.
+  \item Ensembles standardisés: Train2017 (118k), Val2017 (5k), Test2017 (20k).
+\end{itemize}
+
+\paragraph{Usage pour la vidéo} Pré-entraînement des backbones (ResNet, EfficientNet, Transformers); performances COCO corrèlent les capacités vidéo (ex.: YOLOv11x 54.7\% mAP, MI-DETR 52.4\% mAP).
+
+\paragraph{Forces} Très grande échelle; intégration facilitée (PyTorch/TensorFlow/Ultralytics); métriques rigoureuses; scènes en contexte naturel.
+
+\paragraph{Limites} Pas de temporalité; sous-représentation des très petits objets (<32×32) ; distribution de catégories déséquilibrée; annotations statiques.
+
+\paragraph{Utilisation recommandée} Pré-entraînement incontournable pour tout détecteur ; fine-tuning sur petit dataset vidéo cible.
+
+\subsection{DAVIS (Densely Annotated VIdeo Segmentation)}
+\paragraph{Description} Benchmark haute qualité pour segmentation vidéo.
+
+\paragraph{Caractéristiques} \begin{itemize}[left=0pt]
+  \item DAVIS 2016: 50 séquences Full HD (1080p, 24 FPS) ; 2017: 90 séquences, multi-objets.
+  \item Annotations pixel-level exhaustives sur tous les frames; attributs de défis annotés.
+  \item Métriques: similitude région (J), précision contours (F), cohérence temporelle (T).
+\end{itemize}
+
+\paragraph{Forces} Masques \emph{pixel-perfect}; qualité vidéo 1080p ; benchmark standard reconnu; couverture systématique des défis.
+
+\paragraph{Limites} Échelle très limitée; performances en voie de saturation; coût d'annotation prohibitif; focalisation segmentation binaire.
+
+\paragraph{Utilisation recommandée} Benchmark/validation pour segmentation très précise; compléter par données domaine-spécifiques pour entraînement.
+
+\subsection{OD-VIRAT}
+\paragraph{Description} Benchmark large échelle pour détection en surveillance réaliste ; variantes Large (8.7M instances / 599,996 images) et Tiny (288,901 instances / 19,860 images).
+
+\paragraph{Caractéristiques} \begin{itemize}[left=0pt]
+  \item 10 scènes de surveillance (chantiers, parkings, rues), caméras statiques en hauteur.
+  \item Objets de petite échelle; 5 catégories: Bike/Bicycle, Car, Carrying\_object, Person, Vehicle.
+  \item Arrière-plans complexes; sampling 0-frame-skip (Large) vs. 30-frame (Tiny).
+\end{itemize}
+
+\paragraph{Forces} Conditions de surveillance authentiques; échelle massive (Large); benchmarking spécialisé; résolutions HD (1280×720, 1920×1080 à 25–30 FPS).
+
+\paragraph{Limites} Domaine spécialisé (généralisation limitée) ; objets très petits difficiles ; seulement 5 catégories ; biais géographiques/temporalité.
+
+\paragraph{Utilisation recommandée} Entraîner/évaluer des détecteurs pour surveillance ; utiliser Tiny pour prototypage rapide et Large pour entraînement robuste; adapter aux cas non-surveillance via fine-tuning.
+
+\subsection{Tableau comparatif datasets}
+\begin{table}[h]
+  \centering
+  \small
+  \begin{tabular}{p{3cm} p{2.5cm} p{3.8cm} p{3.6cm} p{3.8cm} p{3.6cm}}
+    \toprule
+    \textbf{Dataset} & \textbf{Taille} & \textbf{Annotations} & \textbf{Domaine} & \textbf{Biais principaux} & \textbf{Usage recommandé} \\
+    \midrule
+    ImageNet VID & \textasciitilde4k vidéos / 30 classes & BBoxes par frame & Détection vidéo générique & Échelle limitée; surreprésentation classes; séquences courtes & Benchmarking détection vidéo \\
+    YouTube-VOS & 4,453 clips / 78 cat. & Masques pixel-level (\emph{skip-frame}) & Segmentation vidéo générale & Clips courts; popularité YouTube; variabilité forte & Entraînement segmentation; pré-entraînement vidéo \\
+    COCO & 330k images / 80 cat. & BBoxes; masques; keypoints; captions & Images statiques génériques & Pas de temporalité; petits objets rares; classes déséquilibrées & Pré-entraînement backbones; transfert vidéo \\
+    DAVIS & 50–90 séquences (FHD) & Masques sur \textbf{tous} les frames & Segmentation vidéo précise & Échelle limitée; saturation performances; coût annotation & Validation précision segmentation \\
+    OD-VIRAT & 8.7M inst. (Large) & BBoxes surveillance (5 cat.) & Surveillance réaliste & Petits objets; domaine étroit; biais géographique & Détecteurs surveillance; Tiny pour prototypage \\
+    \bottomrule
+  \end{tabular}
+\end{table}

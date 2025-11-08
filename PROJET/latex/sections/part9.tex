@@ -1,0 +1,16 @@
+% Partie 9 — Conclusion
+\section{Conclusion}
+
+La reconnaissance d’objets dans les flux vidéo repose désormais sur un panorama riche de solutions ML, allant des détecteurs unifiés à une passe (YOLO) aux architectures Transformer vidéo, en passant par des approches hybrides combinant supervision faible et auto-supervision. En 2025, YOLOv11 demeure une référence pour les applications nécessitant une vitesse extrême, tandis que les Transformers vidéo (TGBFormer, ViViT) offrent une précision et une compréhension temporelle supérieures au prix d’une plus grande complexité. Les méthodes émergentes, telles que les \emph{Spiking Neural Networks} et les stratégies faiblement supervisées (PointSR, DOtA), promettent de réduire significativement les coûts d’annotation et d’ouvrir de nouveaux cas d’usage embarqués.
+
+Les jeux de données disponibles sont diversifiés et volumineux : ImageNet VID et YouTube-VOS couvrent des scènes variées avec annotations (boîtes et masques), COCO fournit une base d’images statiques dense, DAVIS sert de référence pour la segmentation au niveau pixel, et OD-VIRAT expose les défis de la surveillance réaliste. Les métriques standardisées (IoU, mAP@0.50:0.95, F1-Score, FPS, latence) assurent une comparaison rigoureuse entre modèles.
+
+Le cadre RGPD impose un impératif de conformité qui reste réalisable : choisir une base légale adaptée (intérêt légitime), conduire une DPIA, appliquer des principes de \emph{Privacy by Design}, et mettre en œuvre chiffrement, anonymisation et procédures d’exercice des droits. La combinaison d’un déploiement phasé, d’une architecture technique robuste et d’un suivi juridique régulier assure la faisabilité du projet.
+
+\paragraph{Perspectives à moyen et long terme} L’évolution du domaine s’oriente vers :
+\begin{itemize}
+  \item des approches hybrides optimisant conjointement coût et performance ;
+  \item l’\emph{edge computing} pour réduire la latence et préserver la vie privée ;
+  \item des techniques de traitement temps réel toujours plus efficaces.
+\end{itemize}
+Ces perspectives ouvrent la voie à des systèmes de reconnaissance d’objets vidéo performants, scalables et respectueux des droits fondamentaux.

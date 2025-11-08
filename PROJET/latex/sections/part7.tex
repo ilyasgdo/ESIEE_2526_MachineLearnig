@@ -1,0 +1,34 @@
+% Partie 7 — Défis et limites
+\section{Défis et limites}
+
+\subsection{Défis techniques}
+La reconnaissance d’objets en vidéo s’appuie sur des modèles confrontés à des scènes et des prises de vue très variées. Plusieurs défis techniques majeurs se dégagent :
+
+\begin{itemize}
+  \item \textbf{Objets petits ou fortement occultés.} Les objets de très petite taille (moins de 32\,\texttimes{}32 pixels) ou partiellement cachés posent un problème de résolution et de visibilité. Ils génèrent peu de pixels utiles pour l’extraction de caractères discriminants, réduisant la fiabilité de la détection, tandis que l’occultation partielle rend difficile la distinction de l’objet de l’arrière-plan.
+
+  \item \textbf{Variations d’éclairage et conditions météo.} Les changements brusques d’éclairage (passage du soleil à l’ombre, contre-jour) et les conditions météorologiques extrêmes (pluie, brouillard, neige) altèrent la qualité d’image et dégradent les performances de modèles formés sur des images claires et stables. Ces variations requièrent des stratégies d’augmentation de données et des prétraitements dynamiques (normalisation adaptative).
+
+  \item \textbf{Mouvement rapide et flou de mouvement.} Les objets se déplaçant rapidement, ou la caméra en mouvement, génèrent du flou cinétique qui dilue les contours et rend la localisation approximative. Les architectures à une seule passe (YOLO) sont particulièrement sensibles au flou, tandis que les transformers bénéficient de l’agrégation temporelle mais souffrent d’une latence accrue liée au traitement des séquences.
+
+  \item \textbf{Arrière-plans complexes et scènes encombrées.} Dans des environnements urbains ou industriels chargés, les objets cibles peuvent se confondre avec des éléments de décor similaires (panneaux, machines, mobilier). Les modèles doivent distinguer les objets pertinents malgré de nombreux distracteurs et textures variées, ce qui nécessite des capacités de contextualisation globale avancées.
+
+  \item \textbf{Compromis précision vs vitesse pour le temps réel.} Les applications de surveillance et de conduite autonome exigent à la fois une haute précision et une faible latence. Les CNN comme YOLO offrent une vitesse élevée (\(>88\,\text{FPS}\) pour YOLOv11) mais peuvent sacrifier de la précision sur petits objets ou scènes complexes, tandis que les transformers vidéo (TGBFormer, ViViT) améliorent la précision multi-cadres au prix d’un débit réduit (\(25\text{–}40\,\text{FPS}\)) et d’une forte consommation mémoire. Trouver l’équilibre adéquat reste un défi permanent.
+\end{itemize}
+
+\subsection{Biais des datasets}
+Les datasets publics présentent des biais pouvant limiter la généralisabilité et l’équité des modèles :
+
+\begin{itemize}
+  \item \textbf{Déséquilibre de classes.} Un nombre disproportionné d’images pour certaines catégories (personne, véhicule, chien) entraîne des modèles surspécialisés au détriment d’objets moins fréquents. Par exemple, ImageNet VID et COCO surreprésentent certaines races de chiens et types de véhicules, biaisant les performances selon la classe.
+
+  \item \textbf{Biais géographiques et culturels.} La majorité des vidéos provient de pays industrialisés (États-Unis, Europe, Asie de l’Est), exposant peu les modèles à des architectures, vêtements, véhicules ou scènes d’autres régions. Les systèmes entraînés sur ces données peuvent mal détecter des objets ou comportements spécifiques à des environnements différents.
+
+  \item \textbf{Biais temporels.} Beaucoup de datasets datent de plus de cinq ans. Les objets et scènes évoluent rapidement (design de véhicules, styles vestimentaires, nouveaux dispositifs urbains). Les modèles risquent de manquer de sensibilité aux objets récents ou aux évolutions d’infrastructure, affectant leur pertinence en production.
+
+  \item \textbf{Impact sur la généralisation et l’équité.} Ces biais mènent à une généralisation limitée et à des inégalités de performance selon les contextes et les populations filmées. Un détecteur peut fonctionner parfaitement sur des scènes diurnes occidentales mais échouer sur des environnements nocturnes ou ruraux.
+
+  \item \textbf{Stratégies de mitigation.} \emph{(i)} \textit{Augmentation de données} : simuler conditions d’éclairage, flou, perspective et objets rares pour enrichir le spectre d’exemples. \emph{(ii)} \textit{Ré-échantillonnage} : équilibrer les classes en sur-échantillonnant les catégories sous-représentées ou en sous-échantillonnant les classes dominantes. \emph{(iii)} \textit{Datasets diversifiés} : combiner plusieurs sources (ImageNet VID, YouTube-VOS, OD-VIRAT, datasets locaux) couvrant variétés géographiques, culturelles et temporelles. \emph{(iv)} \textit{Validation out-of-distribution} : tester la robustesse sur des vidéos hors domaine d’entraînement pour mesurer la généralisation et détecter les zones de faiblesse.
+\end{itemize}
+
+\paragraph{Conclusion.} La prise en compte proactive de ces défis et biais est essentielle pour développer des solutions fiables, équitables et robustes dans des contextes réels variés.

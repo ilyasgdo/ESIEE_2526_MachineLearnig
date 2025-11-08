@@ -1,0 +1,65 @@
+\section{Types d'apprentissage}\label{sec:types-apprentissage}
+
+Cette partie présente les paradigmes d'apprentissage pertinents pour la détection d'objets en vidéo, leurs coûts et leurs compromis de performance.
+
+\subsection{Apprentissage supervisé}
+\textbf{Principe.} Données annotées (bounding boxes + classes) et optimisation d'une perte de localisation \& classification.
+
+\textbf{Stratégies d'annotation.} Annotation \emph{dense} (toutes les frames) vs \emph{skip-frame} (p.ex. 1~FPS sur une vidéo 30~FPS, coût réduit \textasciitilde97\%). Les frames intermédiaires sont apprises par propagation temporelle.
+
+\textbf{Méthodes concernées.} YOLO (v1--v11), Transformers vidéo (p.ex. ViViT), DETR/MI-DETR ; pré-entraînement sur COCO/ImageNet puis fine-tuning domaine.
+
+\textbf{Avantages.} Précision maximale sur benchmarks ; performance prédictible si données suffisantes ; transfert efficace ; outillage mature (PyTorch, CVAT, Labelbox).
+
+\textbf{Limites.} Coût d'annotation élevé ; biais humains ; généralisation limitée hors distribution ; dépendance au domaine (changement de classes/contexte \Rightarrow nouvelles annotations).
+
+\textbf{Coût indicatif.} 1000 vidéos, 1~min, skip-frame 1~FPS \Rightarrow \textasciitilde60k frames. Scénario modéré (4 objets/frame) : coût total \textasciitilde$23.6k (plateforme + main d'œuvre). Segmentation pixel-level \textasciitilde3\times plus coûteuse.
+
+\subsection{Apprentissage non supervisé}
+\textbf{Principe.} Découverte de représentations à partir de signaux vidéo naturels (cohérence temporelle, continuité spatiale) sans labels.
+
+\textbf{Exemples.} Cohérence par tracking ; segmentation auto-supervisée (p.ex. SOLV) ; random walks sur graphes ; apprentissage égocentrique.
+
+\textbf{Avantages.} Zéro annotation ; exploitation de corpus massifs (web) ; découverte de patterns ; robustesse améliorée aux changements de domaine.
+
+\textbf{Limites.} Précision inférieure au supervisé ; conception/entraînement plus complexes ; validation difficile sans ground truth ; sensibilité aux biais des données.
+
+\subsection{Approches hybrides}
+\textbf{Faible supervision.} Point-level (p.ex. PointSR), image-level (WSOD, MIL), pseudo-labels raffinés (p.ex. W2N), collaboration segmentation-détection (p.ex. SDCN). Réduction de coût de 80--95\% vs bounding boxes.
+
+\textbf{Auto-supervision.} Tâches de pré-texte (reconstruction masquée), adaptation de scène par auto-enseignement, cohérence multi-vues (p.ex. DOtA). Foundation models (SAM, CLIP) facilitent zero/few-shot.
+
+\textbf{Avantages.} Coûts drastiquement réduits ; performances \textasciitilde85--95\% du supervisé ; meilleure scalabilité.
+
+\textbf{Limites.} Maturité industrielle inégale ; léger gap de performance (5--15\%) inacceptable en cas critique ; hyperparamètres supplémentaires.
+
+\subsection{Recommandation stratégique}
+\textbf{Court terme (0--6~mois).} Supervisé pour déploiement rapide : modèles pré-entraînés (YOLOv11, MI-DETR), fine-tuning sur 500--2000 vidéos, annotation skip-frame 1~FPS ; privilégier qualité d'annotation et pré-annotation (SAM) pour \textasciitilde30--50\% de gain.
+
+\textbf{Moyen terme (6--18~mois).} Explorer faible supervision sur un sous-ensemble ; comparer vs supervisé ; si \(\ge 90\%\) de la performance, migrer progressivement (hybride : 10--20\% supervisé complet + 80--90\% faible).
+
+\textbf{Long terme (18+~mois).} Auto-supervision \& foundation models ; évaluer régulièrement zero/few-shot et arbitrer coût/performance.
+
+\begin{table}[h]
+  \centering
+  \small
+  \begin{tabular}{l l l l}
+    \toprule
+    Application & Perf. min. & Supervision & Justification \\
+    \midrule
+    Conduite autonome & $>$98\% P/R & Supervisé complet & Criticité sécurité \\
+    Surveillance & $>$95\% R & Supervisé + Faible & Événements critiques \\
+    Retail & $>$85\% F1 & Faiblement supervisé & Scalabilité prioritaire \\
+    Médical & $>$97\% Précision & Supervisé complet & Réglementation stricte \\
+    Sport & $>$80\% mAP & Faible/Auto & Volume élevé \\
+    Inspection qualité & $>$90\% Précision & Hybride & Selon sévérité défauts \\
+    \bottomrule
+  \end{tabular}
+  \caption{Matrice décisionnelle pour le choix du paradigme.}
+\end{table}
+
+\noindent\textbf{ROI simplifié.}
+\[
+  \mathrm{ROI} = \frac{(V \times P) - C}{C},
+\]
+\noindent où \(V\) est la valeur business, \(P\) la performance (normalisée), \(C\) le coût d'annotation. Une baisse de \(C\) de 80\% pour \(\sim10\%\) de perte de \(P\) améliore fortement le ROI pour des applications non critiques.
