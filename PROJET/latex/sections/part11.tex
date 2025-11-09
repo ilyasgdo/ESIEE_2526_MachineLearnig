@@ -1,0 +1,83 @@
+% Part 11 — Détection du feu en milieu urbain : état de l'art et pipeline d'entraînement
+\section{Détection du feu en milieu urbain : état de l'art et pipeline}
+
+Cette section propose une implémentation pragmatique et conforme à l'état de l'art pour entraîner un modèle de détection du feu (et de la fumée) dans des environnements urbains, avec un accent sur la robustesse en conditions réelles (nuit, pluie, trafic, éclairages parasites).
+
+\subsection{Problématique et définitions}
+- Objectifs : détecter \texttt{feu} et \texttt{fumée} en temps réel, limiter les faux positifs (feux de signalisation, phares, néons, reflets).
+- Classes recommandées : \texttt{fire}, \texttt{smoke} (optionnel : \texttt{flare}, \texttt{sparks} si le périmètre l'exige).
+- Contraintes : petites cibles, occlusions, variations d'éclairage, conditions météorologiques.
+
+\subsection{Modèles SOTA et choix pratiques}
+- \textbf{YOLOv8/YOLOv10/RT-DETR} : excellents compromis précision/latence. Pour l'urbain temps réel : \texttt{yolov8s} ou \texttt{yolov8m}. Pour précision maximale : \texttt{yolov8l/x} ou \texttt{rt-detr-l}.\newline
+- Alternatives : \textit{DETR/DINO/EfficientDet}. Utiles pour recherche, mais moins simples à déployer qu'Ultralytics YOLO.
+
+\subsection{Données et annotation}
+- \textbf{Sources publiques} : Roboflow (\textit{Fire/Smoke}), Kaggle (\textit{Fire detection}), CAVIAR (pour négatifs urbains), vidéos YouTube sous licence appropriée.\newline
+- \textbf{Stratégie} : constituer un corpus \emph{feu/fumée} + un corpus \emph{négatif} (nuit, pluie, éclairages, chantiers) pour réduire les faux positifs.
+- \textbf{Guidelines d'annotation} : encadrer la flamme visible (\texttt{fire}) et les panaches (\texttt{smoke}). Éviter d'annoter les reflets lumineux non liés à un incendie.
+
+\subsection{Augmentations recommandées}
+- Photométriques : HSV, contraste, bruit, blur (simulateur de fumée/bruine légère).\newline
+- Géométriques : rotation $\leq 10^{\circ}$, translation $\leq 10\%$, scale 0.9--1.1.\newline
+- Compositions : \texttt{mosaic} et \texttt{mixup} avec parcimonie (stabilité > latence).\newline
+- Spécifiques domaine : overlays de fumée synthétique (alpha) pour robustesse au voile.
+
+\subsection{Configuration dataset (Ultralytics)}
+Créer le fichier \verb|PROJET/fire/fire.yaml| :
+\begin{verbatim}
+path: C:/Users/ilyas/Documents/COURS/ESIEE_2526_MachineLearnig/PROJET/fire
+train: images/train
+val: images/val
+test: images/test
+names:
+  0: fire
+  1: smoke
+\end{verbatim}
+Arborescence attendue (formats YOLO) : \verb|images/*| et \verb|labels/*| avec fichiers \verb|.txt| (classe, \texttt{x\_center}, \texttt{y\_center}, \texttt{width}, \texttt{height}) normalisés.
+
+\subsection{Entraînement (Ultralytics YOLO)}
+Script \verb|train_fire.py| (voir dossier \verb|PROJET/fire|) :
+\begin{verbatim}
+from ultralytics import YOLO
+import torch
+
+model = YOLO('yolov8m.pt')  # speed/accuracy trade-off
+model.train(
+    data='C:/Users/ilyas/Documents/COURS/ESIEE_2526_MachineLearnig/PROJET/fire/fire.yaml',
+    epochs=100, batch=16, imgsz=640,
+    device=0 if torch.cuda.is_available() else 'cpu',
+    workers=4, patience=20,
+    cos_lr=True, optimizer='AdamW', lr0=0.001, weight_decay=0.0005,
+    amp=True, verbose=True
+)
+\end{verbatim}
+
+\subsection{Inférence et seuils}
+Script \verb|infer_fire.py| :
+\begin{verbatim}
+from ultralytics import YOLO
+model = YOLO('runs/detect/train_fire/weights/best.pt')
+model.predict(source='0', conf=0.35, iou=0.5, imgsz=640, stream=True)
+# Ajuster conf pour réduire faux positifs selon le contexte urbain
+\end{verbatim}
+
+\subsection{Évaluation}
+- Métriques : mAP@50-95, précision, rappel, F1.\newline
+- Jeux de test dédiés : nuit/pluie/fort trafic pour robustesse.\newline
+- \textit{Hard negative mining} : itérer en ajoutant des négatifs déclenchés à tort (feux tricolores, phares, reflets).
+
+\subsection{Déploiement et contraintes}
+- Edge (CPU) : \texttt{yolov8n/s} + quantification INT8 (ONNX/TensorRT) si possible.\newline
+- GPU : \texttt{yolov8m/l} pour meilleure précision.\newline
+- Observabilité : journaliser alertes + extraits vidéo, revue humaine, boucle d'amélioration continue.
+
+\subsection{Risques et conformité}
+- Faux positifs (signalisations, reflets) $\Rightarrow$ seuils adaptés, filtre par taille minimale de boîte.\newline
+- Confidentialité : respecter la réglementation (GDPR) pour l'usage de flux urbains et l'archivage.
+
+\subsection{Checklist rapide}
+- Dataset équilibré (feu/fumée/négatifs), validation séparée.\newline
+- Entraînement 80–100 epochs, early stopping, suivi des courbes.\newline
+- Seuils conf adaptés au contexte, tests terrain (jour/nuit/pluie).\newline
+- Déploiement avec journalisation et amélioration continue.

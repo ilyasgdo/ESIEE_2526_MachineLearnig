@@ -1,0 +1,122 @@
+\babel@toc {french}{}\relax 
+\contentsline {section}{Résumé exécutif}{2}{section*.2}%
+\contentsline {section}{\numberline {1}Introduction et contexte}{2}{section.1}%
+\contentsline {subsection}{\numberline {1.1}Mise en contexte du projet}{2}{subsection.1.1}%
+\contentsline {subsection}{\numberline {1.2}Objectifs du rapport}{2}{subsection.1.2}%
+\contentsline {subsection}{\numberline {1.3}Méthodologie de recherche}{3}{subsection.1.3}%
+\contentsline {section}{\numberline {2}État de l’art des méthodes}{3}{section.2}%
+\contentsline {subsection}{\numberline {2.1}Famille YOLO (You Only Look Once)}{3}{subsection.2.1}%
+\contentsline {paragraph}{Principe}{3}{section*.3}%
+\contentsline {paragraph}{Évolution}{3}{section*.4}%
+\contentsline {paragraph}{Performances}{3}{section*.5}%
+\contentsline {paragraph}{Avantages}{4}{section*.6}%
+\contentsline {paragraph}{Limites}{4}{section*.7}%
+\contentsline {paragraph}{Applications typiques}{4}{section*.8}%
+\contentsline {paragraph}{Type d’apprentissage}{4}{section*.9}%
+\contentsline {subsection}{\numberline {2.2}Architectures Transformer pour vidéo}{4}{subsection.2.2}%
+\contentsline {paragraph}{Contexte ViT→vidéo}{4}{section*.10}%
+\contentsline {paragraph}{TGBFormer}{4}{section*.11}%
+\contentsline {paragraph}{VideoGLaMM}{4}{section*.12}%
+\contentsline {paragraph}{ViViT et variantes}{4}{section*.13}%
+\contentsline {paragraph}{Avantages}{5}{section*.14}%
+\contentsline {paragraph}{Limites}{5}{section*.15}%
+\contentsline {paragraph}{Type d’apprentissage}{5}{section*.16}%
+\contentsline {subsection}{\numberline {2.3}DETR et variants}{5}{subsection.2.3}%
+\contentsline {paragraph}{DETR original}{5}{section*.17}%
+\contentsline {paragraph}{MI-DETR}{5}{section*.18}%
+\contentsline {subsection}{\numberline {2.4}Agrégation temporelle inter-frames}{5}{subsection.2.4}%
+\contentsline {paragraph}{YOLO + agrégation de features}{5}{section*.19}%
+\contentsline {paragraph}{Exploitation inter-frames}{5}{section*.20}%
+\contentsline {paragraph}{Avantages}{5}{section*.21}%
+\contentsline {paragraph}{Limites}{5}{section*.22}%
+\contentsline {subsection}{\numberline {2.5}Approches émergentes}{6}{subsection.2.5}%
+\contentsline {paragraph}{SNNs (MSD)}{6}{section*.23}%
+\contentsline {paragraph}{Faible supervision}{6}{section*.24}%
+\contentsline {paragraph}{Potentiel futur}{6}{section*.25}%
+\contentsline {subsection}{\numberline {2.6}Tableau comparatif synthétique}{6}{subsection.2.6}%
+\contentsline {section}{\numberline {3}Datasets disponibles}{6}{section.3}%
+\contentsline {subsection}{\numberline {3.1}ImageNet VID}{6}{subsection.3.1}%
+\contentsline {paragraph}{Description}{6}{section*.26}%
+\contentsline {paragraph}{Caractéristiques}{6}{section*.27}%
+\contentsline {paragraph}{Forces}{7}{section*.28}%
+\contentsline {paragraph}{Biais identifiés}{7}{section*.29}%
+\contentsline {paragraph}{Utilisation recommandée}{7}{section*.30}%
+\contentsline {subsection}{\numberline {3.2}YouTube-VOS}{7}{subsection.3.2}%
+\contentsline {paragraph}{Description}{7}{section*.31}%
+\contentsline {paragraph}{Caractéristiques}{7}{section*.32}%
+\contentsline {paragraph}{Forces}{7}{section*.33}%
+\contentsline {paragraph}{Limites}{7}{section*.34}%
+\contentsline {paragraph}{Utilisation recommandée}{7}{section*.35}%
+\contentsline {subsection}{\numberline {3.3}COCO (Common Objects in Context)}{7}{subsection.3.3}%
+\contentsline {paragraph}{Description}{7}{section*.36}%
+\contentsline {paragraph}{Caractéristiques}{8}{section*.37}%
+\contentsline {paragraph}{Usage pour la vidéo}{8}{section*.38}%
+\contentsline {paragraph}{Forces}{8}{section*.39}%
+\contentsline {paragraph}{Limites}{8}{section*.40}%
+\contentsline {paragraph}{Utilisation recommandée}{8}{section*.41}%
+\contentsline {subsection}{\numberline {3.4}DAVIS (Densely Annotated VIdeo Segmentation)}{8}{subsection.3.4}%
+\contentsline {paragraph}{Description}{8}{section*.42}%
+\contentsline {paragraph}{Caractéristiques}{8}{section*.43}%
+\contentsline {paragraph}{Forces}{8}{section*.44}%
+\contentsline {paragraph}{Limites}{8}{section*.45}%
+\contentsline {paragraph}{Utilisation recommandée}{8}{section*.46}%
+\contentsline {subsection}{\numberline {3.5}OD-VIRAT}{8}{subsection.3.5}%
+\contentsline {paragraph}{Description}{8}{section*.47}%
+\contentsline {paragraph}{Caractéristiques}{9}{section*.48}%
+\contentsline {paragraph}{Forces}{9}{section*.49}%
+\contentsline {paragraph}{Limites}{9}{section*.50}%
+\contentsline {paragraph}{Utilisation recommandée}{9}{section*.51}%
+\contentsline {subsection}{\numberline {3.6}Tableau comparatif datasets}{9}{subsection.3.6}%
+\contentsline {section}{\numberline {4}Métriques de performance}{9}{section.4}%
+\contentsline {subsection}{\numberline {4.1}Métriques de précision spatiale}{10}{subsection.4.1}%
+\contentsline {paragraph}{IoU (Intersection over Union)}{10}{section*.52}%
+\contentsline {paragraph}{Précision et Rappel}{10}{section*.53}%
+\contentsline {subsection}{\numberline {4.2}Métriques agrégées}{10}{subsection.4.2}%
+\contentsline {paragraph}{F1-Score}{10}{section*.54}%
+\contentsline {paragraph}{Average Precision (AP) et Mean Average Precision (mAP)}{11}{section*.55}%
+\contentsline {subsection}{\numberline {4.3}Métriques de vitesse}{11}{subsection.4.3}%
+\contentsline {paragraph}{FPS (Frames Per Second)}{11}{section*.56}%
+\contentsline {paragraph}{Latence}{11}{section*.57}%
+\contentsline {subsection}{\numberline {4.4}Choix des métriques selon cas d'usage}{11}{subsection.4.4}%
+\contentsline {subsection}{\numberline {4.5}Tableau récapitulatif : Métriques par cas d'usage}{12}{subsection.4.5}%
+\contentsline {section}{\numberline {5}Types d'apprentissage}{12}{section.5}%
+\contentsline {subsection}{\numberline {5.1}Apprentissage supervisé}{12}{subsection.5.1}%
+\contentsline {subsection}{\numberline {5.2}Apprentissage non supervisé}{13}{subsection.5.2}%
+\contentsline {subsection}{\numberline {5.3}Approches hybrides}{13}{subsection.5.3}%
+\contentsline {subsection}{\numberline {5.4}Recommandation stratégique}{13}{subsection.5.4}%
+\contentsline {section}{\numberline {6}Vie priv\'ee et s\'ecurit\'e}{14}{section.6}%
+\contentsline {subsection}{\numberline {6.1}Cadre r\'eglementaire RGPD}{14}{subsection.6.1}%
+\contentsline {subsection}{\numberline {6.2}\'Evaluation d'impact (DPIA)}{14}{subsection.6.2}%
+\contentsline {subsection}{\numberline {6.3}Mesures techniques de protection}{15}{subsection.6.3}%
+\contentsline {subsection}{\numberline {6.4}Technologies alternatives}{15}{subsection.6.4}%
+\contentsline {subsection}{\numberline {6.5}Donn\'ees sensibles \& minimisation}{15}{subsection.6.5}%
+\contentsline {subsection}{\numberline {6.6}Checklist de conformit\'e}{15}{subsection.6.6}%
+\contentsline {section}{\numberline {7}Défis et limites}{16}{section.7}%
+\contentsline {subsection}{\numberline {7.1}Défis techniques}{16}{subsection.7.1}%
+\contentsline {subsection}{\numberline {7.2}Biais des datasets}{16}{subsection.7.2}%
+\contentsline {paragraph}{Conclusion.}{17}{section*.58}%
+\contentsline {section}{\numberline {8}Recommandations et faisabilité}{17}{section.8}%
+\contentsline {subsection}{\numberline {8.1}Matrice décisionnelle par cas d’usage}{17}{subsection.8.1}%
+\contentsline {subsection}{\numberline {8.2}Roadmap d’implémentation}{17}{subsection.8.2}%
+\contentsline {subsection}{\numberline {8.3}Estimation des ressources}{18}{subsection.8.3}%
+\contentsline {paragraph}{Humaines}{18}{section*.59}%
+\contentsline {paragraph}{Techniques}{18}{section*.60}%
+\contentsline {paragraph}{Financières}{18}{section*.61}%
+\contentsline {paragraph}{Temporelles}{18}{section*.62}%
+\contentsline {subsection}{\numberline {8.4}Risques et mitigation}{18}{subsection.8.4}%
+\contentsline {subsection}{\numberline {8.5}Conclusion sur la faisabilité}{19}{subsection.8.5}%
+\contentsline {section}{\numberline {9}Conclusion}{19}{section.9}%
+\contentsline {paragraph}{Perspectives à moyen et long terme}{19}{section*.63}%
+\contentsline {section}{\numberline {10}Sources et références}{19}{section.10}%
+\contentsline {section}{\numberline {11}Détection du feu en milieu urbain : état de l'art et pipeline}{21}{section.11}%
+\contentsline {subsection}{\numberline {11.1}Problématique et définitions}{21}{subsection.11.1}%
+\contentsline {subsection}{\numberline {11.2}Modèles SOTA et choix pratiques}{21}{subsection.11.2}%
+\contentsline {subsection}{\numberline {11.3}Données et annotation}{22}{subsection.11.3}%
+\contentsline {subsection}{\numberline {11.4}Augmentations recommandées}{22}{subsection.11.4}%
+\contentsline {subsection}{\numberline {11.5}Configuration dataset (Ultralytics)}{22}{subsection.11.5}%
+\contentsline {subsection}{\numberline {11.6}Entraînement (Ultralytics YOLO)}{22}{subsection.11.6}%
+\contentsline {subsection}{\numberline {11.7}Inférence et seuils}{23}{subsection.11.7}%
+\contentsline {subsection}{\numberline {11.8}Évaluation}{23}{subsection.11.8}%
+\contentsline {subsection}{\numberline {11.9}Déploiement et contraintes}{23}{subsection.11.9}%
+\contentsline {subsection}{\numberline {11.10}Risques et conformité}{23}{subsection.11.10}%
+\contentsline {subsection}{\numberline {11.11}Checklist rapide}{23}{subsection.11.11}%

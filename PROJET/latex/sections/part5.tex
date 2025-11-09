@@ -11,9 +11,9 @@ Cette partie présente les paradigmes d'apprentissage pertinents pour la détect
 
 \textbf{Avantages.} Précision maximale sur benchmarks ; performance prédictible si données suffisantes ; transfert efficace ; outillage mature (PyTorch, CVAT, Labelbox).
 
-\textbf{Limites.} Coût d'annotation élevé ; biais humains ; généralisation limitée hors distribution ; dépendance au domaine (changement de classes/contexte \Rightarrow nouvelles annotations).
+\textbf{Limites.} Coût d'annotation élevé ; biais humains ; généralisation limitée hors distribution ; dépendance au domaine (changement de classes/contexte $\Rightarrow$ nouvelles annotations).
 
-\textbf{Coût indicatif.} 1000 vidéos, 1~min, skip-frame 1~FPS \Rightarrow \textasciitilde60k frames. Scénario modéré (4 objets/frame) : coût total \textasciitilde$23.6k (plateforme + main d'œuvre). Segmentation pixel-level \textasciitilde3\times plus coûteuse.
+\textbf{Coût indicatif.} 1000 vidéos, 1~min, skip-frame 1~FPS $\Rightarrow$ \textasciitilde60k frames. Scénario modéré (4 objets/frame) : coût total \textasciitilde\$23.6k (plateforme + main d'œuvre). Segmentation pixel-level \textasciitilde$3\times$ plus coûteuse.
 
 \subsection{Apprentissage non supervisé}
 \textbf{Principe.} Découverte de représentations à partir de signaux vidéo naturels (cohérence temporelle, continuité spatiale) sans labels.

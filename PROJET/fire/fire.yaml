@@ -1,0 +1,7 @@
+path: C:/Users/ilyas/Documents/COURS/ESIEE_2526_MachineLearnig/PROJET/fire
+train: images/train
+val: images/val
+test: images/test
+names:
+  0: fire
+  1: smoke

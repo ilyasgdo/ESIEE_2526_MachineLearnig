@@ -14,8 +14,8 @@ Pour la classification binaire (présence/absence sur pixel ou instance), on ren
 \emph{Interprétation} : \begin{itemize}[left=0pt]
   \item IoU = 0 : aucun chevauchement
   \item 0 < IoU < 0.5 : localisation imprécise
-  \item IoU ≥ 0.5 : détection généralement considérée valide
-  \item IoU ≥ 0.75 : haute précision de localisation
+  \item IoU $\geq$ 0.5 : détection généralement considérée valide
+  \item IoU $\geq$ 0.75 : haute précision de localisation
   \item IoU = 1 : correspondance parfaite
 \end{itemize}
 \emph{Pertinence} : métrique fondamentale de localisation, pénalise sous- et sur-détection. \emph{Limites} : forte sensibilité aux petits objets (< 32×32), n'encode pas l'exactitude de la classe.
@@ -40,7 +40,7 @@ Pénalise les modèles déséquilibrés, utile sur datasets avec classes majorit
 \paragraph{Average Precision (AP) et Mean Average Precision (mAP)} \emph{AP} résume la courbe précision–rappel (aire sous courbe). \emph{mAP} : moyenne des AP sur toutes les classes.
 \begin{itemize}[left=0pt]
   \item \emph{mAP@0.50} (VOC) : seuil IoU unique à 0.50, indulgent sur la localisation.
-  \item \emph{mAP@0.50:0.95} (COCO) : moyenne sur IoU ∈ \{0.50,...,0.95\}, plus exigeant (souvent ~15–20 pts \emph{en dessous} de mAP@0.50 pour un même modèle).
+  \item \emph{mAP@0.50:0.95} (COCO) : moyenne sur IoU $\in$ \{0.50,...,0.95\}, plus exigeant (souvent ~15–20 pts \emph{en dessous} de mAP@0.50 pour un même modèle).
 \end{itemize}
 \emph{Pertinence} : standard de comparaison inter-modèles (COCO, ImageNet VID). \emph{Limites} : masque les faiblesses sur classes rares, biais si objets « faciles » dominent, peu sensible à la consistance temporelle.
 
@@ -62,16 +62,16 @@ Exemple : TGBFormer atteint 86.5\% mAP à 41 FPS (bon équilibre précision/vi
   \item Conduite autonome : < 50 ms \quad Drone : < 30 ms
   \item Surveillance : < 200 ms \quad Analytics offline : non critique
 \end{itemize}
-\emph{Variabilité matériel} : GPU A100/V100 ≫ RTX 3060 ≫ CPU ≫ Edge (Jetson/mobile). Optimisations courantes : quantification (FP32→INT8), pruning, distillation, TensorRT/ONNX (gain 2–5×; perte mAP ~1–3 pts).
+\emph{Variabilité matériel} : GPU A100/V100 $\gg$ RTX 3060 $\gg$ CPU $\gg$ Edge (Jetson/mobile). Optimisations courantes : quantification (FP32$\to$INT8), pruning, distillation, TensorRT/ONNX (gain 2--5$\times$; perte mAP ~1--3 pts).
 
 \subsection{Choix des métriques selon cas d'usage}
 Le choix doit refléter coûts relatifs des erreurs et contraintes opérationnelles.
 \begin{itemize}[left=0pt]
-  \item \textbf{Surveillance sécurité} : rappel élevé, mAP@0.50, FPS ≥ 25.
-  \item \textbf{Conduite autonome} : mAP@0.50:0.95, FPS ≥ 30, latence < 50 ms.
-  \item \textbf{Retail analytics} : précision, rappel, F1 élevé (≤ temps réel strict).
+  \item \textbf{Surveillance sécurité} : rappel élevé, mAP@0.50, FPS $\geq$ 25.
+  \item \textbf{Conduite autonome} : mAP@0.50:0.95, FPS $\geq$ 30, latence < 50 ms.
+  \item \textbf{Retail analytics} : précision, rappel, F1 élevé ($\leq$ temps réel strict).
   \item \textbf{Inspection industrielle} : précision élevée, IoU/mAP@0.75 (localisation fine).
-  \item \textbf{Analyse sportive} : mAP@0.50, FPS ≥ 30, F1 (fluidité prioritaire).
+  \item \textbf{Analyse sportive} : mAP@0.50, FPS $\geq$ 30, F1 (fluidité prioritaire).
   \item \textbf{Santé/Médical} : précision très élevée, IoU, mAP@0.75 (offline acceptable).
 \end{itemize}
 
@@ -83,11 +83,11 @@ Le choix doit refléter coûts relatifs des erreurs et contraintes opérationnel
     \toprule
     \textbf{Cas d'usage} & \textbf{Métriques prioritaires} & \textbf{Seuils typiques} & \textbf{Justification} \\
     \midrule
-    Surveillance & Rappel, mAP@0.50, FPS & Rappel > 0.95, FPS ≥ 25 & Éviter FN critiques, localisation modérée suffisante, temps réel requis. \\
-    Conduite autonome & mAP@0.50:0.95, Latence & Latence < 50 ms, FPS ≥ 30 & Précision \& réactivité maximales, erreurs très coûteuses. \\
+    Surveillance & Rappel, mAP@0.50, FPS & Rappel > 0.95, FPS $\geq$ 25 & Éviter FN critiques, localisation modérée suffisante, temps réel requis. \\
+    Conduite autonome & mAP@0.50:0.95, Latence & Latence < 50 ms, FPS $\geq$ 30 & Précision \& réactivité maximales, erreurs très coûteuses. \\
     Retail analytics & Précision, Rappel, F1 & F1 > 0.85 & Statistiques fiables, temps réel strict non critique (15–20 FPS). \\
     Inspection industrielle & IoU, mAP@0.75, Précision & IoU/mAP élevés & Localisation fine pour action robotique, coûts FP/FN élevés. \\
-    Analyse sportive & mAP@0.50, FPS, F1 & FPS ≥ 30 & Fluidité visuelle, corrections possibles en post-prod. \\
+    Analyse sportive & mAP@0.50, FPS, F1 & FPS $\geq$ 30 & Fluidité visuelle, corrections possibles en post-prod. \\
     Santé/Médical & Précision, IoU, mAP@0.75 & Précision → max & Diagnostic fiable, minimiser FP/FN, offline acceptable. \\
     \bottomrule
   \end{tabular}
